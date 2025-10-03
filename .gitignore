@@ -1,0 +1,14 @@
+*
+!.gitignore
+!README.md
+!week00/
+!week00/**
+!week01/
+!week01/**
+!week02/
+!week02/**
+!week03/
+!week03/**
+!.github
+!.github/**
+
