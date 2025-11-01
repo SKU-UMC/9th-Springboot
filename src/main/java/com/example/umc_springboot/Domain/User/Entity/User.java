@@ -1,6 +1,7 @@
 package com.example.umc_springboot.Domain.User.Entity;
 
 
+import com.example.umc_springboot.Domain.Address.Entity.Address;
 import com.example.umc_springboot.Domain.User.Enums.Gender;
 import com.example.umc_springboot.Domain.User.Enums.UserStatus;
 import com.example.umc_springboot.Domain.UserFoodType.Entity.UserFoodType;
@@ -8,10 +9,14 @@ import com.example.umc_springboot.Domain.UserProvision.Entity.UserProvision;
 import com.example.umc_springboot.Domain.UserStoreMission.Entity.UserStoreMission;
 import com.example.umc_springboot.Global.Entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,6 +40,17 @@ public class User extends BaseTimeEntity {
     @Column(name = "nickname",  nullable = false, length = 10)
     private String nickname;
 
+    @Column(name="password", nullable = false)
+    @Size(min = 10, max=15)
+    @Pattern(
+            regexp = "^(?=.*[A-Za-z])(?=.*[!@#$%^&*(),.?\":{}|<>]).{10,15}$",
+            // (?=.*[A-Za-z]): 영문자가 최소 1개 이상 포함
+            // (?=.*[!@#$%^&*(),.?":{}|<>]): 특수문자가 최소 1개 이상 포함
+            // .{10,15}: 전체 길이가 10~15자
+            message = "비밀번호는 영문자와 특수문자를 반드시 포함해야 합니다."
+    )
+    private String password;
+
     @Column(name = "gender",  nullable = false)
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -43,13 +59,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "birth",  nullable = false)
     private LocalDate birth;
 
-    @Column(name = "address",  nullable = false, length = 30)
-    private String address;
-
     @Column(name = "phone_number",  nullable = false, length = 15)
     private String phoneNumber;
 
-    @Column(name = "email",  nullable = false, length = 20)
+    @Column(name = "email",  nullable = false, length = 40)
     private String email;
 
     @Column(name = "point",  nullable = false)
@@ -64,12 +77,19 @@ public class User extends BaseTimeEntity {
     @Column(name="inactive_date")
     private LocalDate inactiveDate;
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserStoreMission> userStoreMissionSet = new HashSet<>();
+    // user가 삭제되거나 userStoreMissionList에서 특정 객체가 제거되면, 해당 테이블에서도 제거되도록 설정
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE,  orphanRemoval = true)
+    private List<UserStoreMission> userStoreMissionList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserFoodType> userFoodTypeSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserProvision> userProvisionSet = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE,  orphanRemoval = true)
+    private List<UserFoodType> userFoodTypeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE,  orphanRemoval = true)
+    private List<UserProvision> userProvisionList = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="address_id", nullable = false)
+    private Address address;
+
 }
