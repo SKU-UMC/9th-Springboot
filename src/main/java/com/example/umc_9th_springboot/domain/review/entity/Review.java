@@ -8,8 +8,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.example.umc_9th_springboot.domain.common.BaseEntity;
 
 
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +24,8 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, precision = 2, scale = 1)
-    private BigDecimal rating;
+    @Column
+    private double rating;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;

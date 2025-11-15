@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long> , ReviewQueryRepository{
     //-> 단순 crud로 표현할 수 없을 때, 무조건 함수를 선언
     // 복합 조건이 이에 해당 (검색 조건이 여러 개인 경우)
 

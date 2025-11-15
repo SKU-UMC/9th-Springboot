@@ -7,7 +7,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.example.umc_9th_springboot.domain.common.BaseEntity;
 
 
-
 @Entity
 @Table(name = "review_comment")
 @Getter
