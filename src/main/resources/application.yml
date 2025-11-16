@@ -1,0 +1,19 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: "umc9th"
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PW}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
