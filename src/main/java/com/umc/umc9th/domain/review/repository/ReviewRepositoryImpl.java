@@ -32,6 +32,4 @@ public class ReviewRepositoryImpl implements ReviewQueryDsl {
                 .limit(pageable.getPageSize())
                 .fetch();
     }
-
-
 }

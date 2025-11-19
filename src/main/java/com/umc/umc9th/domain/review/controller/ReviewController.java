@@ -3,6 +3,7 @@ package com.umc.umc9th.domain.review.controller;
 import com.umc.umc9th.domain.review.dto.request.MyReviewsSearchRequest;
 import com.umc.umc9th.domain.review.dto.response.MyReviewsSearchResponse;
 import com.umc.umc9th.domain.review.service.ReviewService;
+import com.umc.umc9th.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,14 +28,17 @@ public class ReviewController {
      * ? 필드 하나짜리의 dto는 불필요해보임 but, url에서 userId 같은 필드 정보는 숨겨주는 것을 지향
      */
     @GetMapping
-    public Page<MyReviewsSearchResponse> getMyReviews(
+    public ApiResponse<Page<MyReviewsSearchResponse>> getMyReviews(
             @RequestBody MyReviewsSearchRequest body,
             @RequestParam(required = false) Long storeId,
             @RequestParam(defaultValue = "0") Integer ratingFilter,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        return reviewService.getMyReviews(body.userId(), storeId, ratingFilter, pageable);
+        Page<MyReviewsSearchResponse> page =
+                reviewService.getMyReviews(body.userId(), storeId, ratingFilter, pageable);
+
+        return ApiResponse.success(page);
     }
 }
 
