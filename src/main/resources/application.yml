@@ -1,20 +1,25 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  profiles:
+    active: local
+
   application:
-    name: "UMC_9th_SpringBoot" # "umc9th"
+    name: "UMC_9th_SpringBoot"
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL JDBC ???? ??? ??
-    url: ${DB_URL} # jdbc:mysql://localhost:3306/{???????} //${DB_URL}
-    username: ${DB_USER} # MySQL ?? ??
-    password: ${DB_PW}  # MySQL ????
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PW}
 
   jpa:
-    database: mysql # ??? ?????? ?? ?? (MySQL)
-    database-platform: org.hibernate.dialect.MySQLDialect # Hibernate?? ??? MySQL ??(dialect) ??
-    show-sql: true # ??? SQL ??? ??? ???? ?? ??
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
     hibernate:
-      ddl-auto: update # ?????? ?? ? ?????? ???? ??? ??
+      ddl-auto: update
     properties:
       hibernate:
-        format_sql: true # ???? SQL ??? ?? ?? ???
-  C:\9th-Springboot
+        format_sql: true
