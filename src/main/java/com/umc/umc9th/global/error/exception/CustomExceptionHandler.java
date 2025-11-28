@@ -20,7 +20,7 @@ import java.nio.file.AccessDeniedException;
 public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ApiResponse> handleBusinessException(CustomException e) {
+    public ResponseEntity<ApiResponse<?>> handleBusinessException(CustomException e) {
         log.error("CustomException : {}", e.getMessage(), e);
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
@@ -53,7 +53,7 @@ public class CustomExceptionHandler {
             InvalidFormatException.class,
             ServletRequestBindingException.class
     })
-    public ResponseEntity<ApiResponse> handleBadRequestException(Exception e) {
+    public ResponseEntity<ApiResponse<?>> handleBadRequestException(Exception e) {
         log.error("BadRequestException : {}", e.getMessage(), e);
         return ResponseEntity
                 .status(GlobalErrorCode.BAD_REQUEST.getStatus())
@@ -61,7 +61,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
-    public ResponseEntity<ApiResponse> handleNotFoundException(Exception e) {
+    public ResponseEntity<ApiResponse<?>> handleNotFoundException(Exception e) {
         log.error("NotFoundException : {}", e.getMessage(), e);
         return ResponseEntity
                 .status(GlobalErrorCode.NOT_FOUND.getStatus())
@@ -69,7 +69,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleException(Exception e) {
+    public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
         log.error("Exception : {}", e.getMessage(), e);
         return ResponseEntity
                 .status(GlobalErrorCode.INTERNAL_SERVER_ERROR.getStatus())

@@ -20,4 +20,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewQue
                          @Param("text") String text
     );
 
+    default Review saveReview(Review review) {
+        return save(review);
+    }
+
+
 }

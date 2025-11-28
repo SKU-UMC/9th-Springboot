@@ -3,9 +3,11 @@ package com.umc.umc9th.domain.mission.userMission.repository;
 
 import com.umc.umc9th.domain.mission.dto.response.AvailableMissionInRegionResponse;
 import com.umc.umc9th.domain.mission.dto.response.RegionMissionSuccessCountResponse;
+import com.umc.umc9th.domain.mission.entity.Mission;
 import com.umc.umc9th.domain.mission.userMission.dto.response.UserMissionInProgressResponse;
 import com.umc.umc9th.domain.mission.userMission.dto.response.UserMissionSuccessResponse;
 import com.umc.umc9th.domain.mission.userMission.entity.UserMission;
+import com.umc.umc9th.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -105,4 +107,7 @@ where um.user_id = :userId
             @Param("regionId") Long regionId,
             Pageable pageable
     );
+
+
+    Boolean existsByUserAndMission(User user, Mission mission);
 }

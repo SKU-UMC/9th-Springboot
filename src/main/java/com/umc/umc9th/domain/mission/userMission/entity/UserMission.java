@@ -6,8 +6,6 @@ import com.umc.umc9th.domain.user.entity.User;
 import com.umc.umc9th.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Builder
@@ -33,4 +31,12 @@ public class UserMission extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "mission_id", nullable = false)
     private Mission mission;
+
+    private UserMission(Mission mission, User user, MissionStatus status) {
+        this.mission = mission;
+        this.user = user;
+        this.missionStatus = status;
+    }
+
+    public static UserMission inProgressing(Mission mission, User user, MissionStatus missionStatus) { return new UserMission(mission, user, MissionStatus.IN_PROGRESS); }
 }

@@ -26,4 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
         where u.id = :userId
     """)
     Optional<MyPageResponse> findMyPageById(@Param("userId") Long userId);
+
+    Long searchById(Long id);
 }

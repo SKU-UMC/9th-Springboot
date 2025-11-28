@@ -1,9 +1,12 @@
 package com.umc.umc9th.domain.review.controller;
 
 import com.umc.umc9th.domain.review.dto.request.MyReviewsSearchRequest;
+import com.umc.umc9th.domain.review.dto.request.ReviewCreateRequest;
 import com.umc.umc9th.domain.review.dto.response.MyReviewsSearchResponse;
+import com.umc.umc9th.domain.review.dto.response.ReviewCreateResponse;
 import com.umc.umc9th.domain.review.service.ReviewService;
 import com.umc.umc9th.global.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,5 +43,16 @@ public class ReviewController {
 
         return ApiResponse.success(page);
     }
-}
 
+    @PostMapping("/{storeId}/reviews")
+    public ApiResponse<ReviewCreateResponse> createReview(
+            @PathVariable Long storeId,
+            @RequestBody @Valid ReviewCreateRequest request
+    ) {
+        ReviewCreateResponse response =
+                reviewService.createReview(storeId, request.userId(), request);
+
+        return ApiResponse.success(response);
+    }
+
+}
