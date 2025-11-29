@@ -1,56 +1,44 @@
-package com.example.umc_9th_springboot.domain.review.service;
+package com.example.umc_9th_springboot.domain.review.service.command;
 
 import com.example.umc_9th_springboot.domain.review.converter.ReviewConverter;
-import com.example.umc_9th_springboot.domain.review.dto.ReviewResponse;
 import com.example.umc_9th_springboot.domain.review.dto.req.ReviewReqDTO;
 import com.example.umc_9th_springboot.domain.review.dto.res.ReviewResDTO;
 import com.example.umc_9th_springboot.domain.review.entity.Review;
-import com.example.umc_9th_springboot.domain.review.enums.StarScore;
 import com.example.umc_9th_springboot.domain.review.repository.ReviewRepository;
 import com.example.umc_9th_springboot.domain.shop.entity.Shop;
 import com.example.umc_9th_springboot.domain.shop.repository.ShopRepository;
 import com.example.umc_9th_springboot.domain.user.entity.User;
 import com.example.umc_9th_springboot.domain.user.repository.UserRepository;
+import com.example.umc_9th_springboot.global.apiPayload.code.GeneralErrorCode;
+import com.example.umc_9th_springboot.global.apiPayload.exception.GeneralException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
+public class ReviewCommandServiceImpl implements ReviewCommandService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ShopRepository shopRepository;
 
-    // 가게명 + 별점대 API
-    public Page<ReviewResponse> getReviews(String shopName, Integer score, Pageable pageable) {
-        return reviewRepository.search(shopName, StarScore.from(score), pageable);
-    }
-
-    // 리뷰 작성 API
+    // 리뷰 작성
+    @Override
     @Transactional
     public ReviewResDTO.CreateDTO createReview(ReviewReqDTO.CreateDTO dto) {
 
         Long tempUserId = 1L;
 
-        // 유저 조회
         User user = userRepository.findById(tempUserId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
-        // 가게 조회
         Shop shop = shopRepository.findById(dto.shopId())
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.NOT_FOUND));
 
-        // 리뷰 엔티티 생성
         Review review = ReviewConverter.toReview(dto, user, shop);
+        Review saved = reviewRepository.save(review);
 
-        // 저장
-        Review savedReview = reviewRepository.save(review);
-
-        // 응답 DTO 변환
-        return ReviewConverter.toCreateDTO(savedReview);
+        return ReviewConverter.toCreateDTO(saved);
     }
 }

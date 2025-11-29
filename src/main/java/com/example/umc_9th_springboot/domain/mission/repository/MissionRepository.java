@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 
 
 public interface MissionRepository extends JpaRepository<Mission, Long> {
-
     // 해당 지역에서 사용자가 아직 완료하지 않은 미션 조회(페이징)
     @Query("select m from Mission m " +
             "join fetch m.shop s " +
@@ -24,6 +23,4 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             @Param("userId") Long userId,
             Pageable pageable
     );
-
-
 }

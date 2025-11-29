@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> , ReviewQueryRepository{
-    //-> 단순 crud로 표현할 수 없을 때, 무조건 함수를 선언
+  /*  //-> 단순 crud로 표현할 수 없을 때, 무조건 함수를 선언
     // 복합 조건이 이에 해당 (검색 조건이 여러 개인 경우)
 
     //fetch join을 사용하는 이유
@@ -21,5 +21,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> , ReviewQu
             "left join fetch r.reviewCommentList " +
             "where r.shop = :shop " +
             "order by r.createdAt desc")
-    List<Review> findAllByShopWithComments(Shop shop);
+    List<Review> findAllByShopWithComments(Shop shop);*/
 }

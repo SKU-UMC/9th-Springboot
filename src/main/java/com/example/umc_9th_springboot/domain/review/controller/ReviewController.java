@@ -1,10 +1,16 @@
 package com.example.umc_9th_springboot.domain.review.controller;
 
 import com.example.umc_9th_springboot.domain.review.dto.ReviewResponse;
+import com.example.umc_9th_springboot.domain.review.dto.req.ReviewReqDTO;
+import com.example.umc_9th_springboot.domain.review.dto.res.ReviewResDTO;
+import com.example.umc_9th_springboot.domain.review.exception.code.ReviewSuccessCode;
 import com.example.umc_9th_springboot.domain.review.service.ReviewService;
 import com.example.umc_9th_springboot.global.apiPayload.ApiResponse;
 import com.example.umc_9th_springboot.global.apiPayload.code.GeneralSuccessCode;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
     private final ReviewService reviewService;
-
     // 리뷰 목록 조회
     @GetMapping
     public ApiResponse<Page<ReviewResponse>> getReviews(
@@ -33,5 +38,16 @@ public class ReviewController {
     ) {
         Page<ReviewResponse> reviewPage = reviewService.getReviews(shop, score, pageable);
         return ApiResponse.onSuccess(GeneralSuccessCode.OK, reviewPage);
+    }
+
+    //리뷰 작성
+    @PostMapping
+    public ApiResponse<ReviewResDTO.CreateDTO> createReview(
+            @Valid @RequestBody ReviewReqDTO.CreateDTO dto
+    ) {
+        return ApiResponse.onSuccess(
+                ReviewSuccessCode.CREATED,
+                reviewService.createReview(dto)
+        );
     }
 }
