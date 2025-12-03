@@ -1,0 +1,30 @@
+package com.example.umc9th.domain.member.enums;
+
+public enum Address {
+    DOBONG,
+    DONGDAEMUN,
+    DONGJAK,
+    EUNPYEONG,
+    GANGBUK,
+    GANGDONG,
+    GANGNAM,
+    GANGSEO,
+    GEUMCHEON,
+    GURO,
+    GWANAK,
+    GWANGJIN,
+    JONGNO,
+    JUNG,
+    JUNGNANG,
+    MAPO,
+    NOWON,
+    SEOCHO,
+    SEODAEMUN,
+    SEONGBUK,
+    SEONGDONG,
+    SONGPA,
+    YANGCHEON,
+    YEONGDEUNGPO,
+    YONGSAN,
+    NONE;
+}
