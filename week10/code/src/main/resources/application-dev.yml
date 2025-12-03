@@ -1,0 +1,3 @@
+alert:
+  discord:
+    enabled: true
