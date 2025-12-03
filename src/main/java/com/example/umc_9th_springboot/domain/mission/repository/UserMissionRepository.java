@@ -2,6 +2,7 @@ package com.example.umc_9th_springboot.domain.mission.repository;
 
 import com.example.umc_9th_springboot.domain.mission.entity.UserMission;
 import com.example.umc_9th_springboot.domain.mission.enums.MissionStatus;
+import com.example.umc_9th_springboot.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,7 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
     @Query("select count(um) from UserMission um " +
             "where um.user.id = :userId and um.status = 'COMPLETED'")
     Long countCompletedMissions(@Param("userId") Long userId);
+
+    //내가 진행 중인 미션 목록 페이징 조회
+    Page<UserMission> findAllByUserAndStatus(User user, MissionStatus status, Pageable pageable);
 }

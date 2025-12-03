@@ -1,14 +1,21 @@
 package com.example.umc_9th_springboot.domain.review.repository;
 
 import com.example.umc_9th_springboot.domain.review.entity.Review;
-import com.example.umc_9th_springboot.domain.shop.entity.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import com.example.umc_9th_springboot.domain.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> , ReviewQueryRepository{
+    // 내가 작성한 리뷰 목록 조회
+    Page<Review> findAllByUser(User user, Pageable pageable);
+
+
+
   /*  //-> 단순 crud로 표현할 수 없을 때, 무조건 함수를 선언
     // 복합 조건이 이에 해당 (검색 조건이 여러 개인 경우)
 

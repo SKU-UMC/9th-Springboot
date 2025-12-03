@@ -53,4 +53,28 @@ public class ReviewService {
         // 응답 DTO 변환
         return ReviewConverter.toCreateDTO(savedReview);
     }
+
+    // 내가 작성한 리뷰 목록 조회 API
+    @Transactional
+    public ReviewResDTO.ReviewPreViewListDTO getMyReviews(Long userId, Integer page) {
+
+        // 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // page는 프론트에서 1부터, JPA는 0부터 시작하니까 -1 해줌
+        int pageIndex = page - 1;
+
+        // 한 페이지에 10개씩 조회
+        org.springframework.data.domain.PageRequest pageRequest =
+                org.springframework.data.domain.PageRequest.of(pageIndex, 10);
+
+        // 해당 유저가 작성한 리뷰들만 페이징 조회
+        Page<Review> result = reviewRepository.findAllByUser(user, pageRequest);
+
+        // 엔티티 Page → 응답 DTO로 변환
+        return ReviewConverter.toReviewPreviewListDTO(result);
+    }
+
+
 }
