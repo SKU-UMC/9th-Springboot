@@ -36,7 +36,7 @@ public class ReviewMapper {
      * @param photoUrlMap : key=reviewId, value=해당 리뷰에 담긴 사진들의 url 리스트
      * @return ReviewResDto : 해당 리뷰와 관련된 데이터들이 담겨 있음.
      */
-    public ReviewResDto toReviewResponseDto(Review review, Map<Long, List<String>> photoUrlMap){
+    public ReviewResDto toReviewResDto(Review review, Map<Long, List<String>> photoUrlMap){
         if(review == null){
             return null;
         }
@@ -56,4 +56,5 @@ public class ReviewMapper {
                 .reviewDate(review.getCreatedAt().toLocalDate())
                 .build();
     }
+
 }

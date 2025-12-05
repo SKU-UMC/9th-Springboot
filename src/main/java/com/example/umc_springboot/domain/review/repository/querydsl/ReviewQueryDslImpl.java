@@ -63,6 +63,7 @@ public class ReviewQueryDslImpl implements ReviewQueryDsl {
                 .selectFrom(review)
                 .leftJoin(review.store, store).fetchJoin()
                 .leftJoin(review.user, user).fetchJoin()
+                .where(predicate)   // where 조건문 지정
                 .offset(pageable.getOffset()) // 페이지 번호
                 .limit(pageable.getPageSize()) // 페이지에 들어가는 데이터 개수
                 .orderBy(QueryDslUtil.getOrderSpecifiers(pageable, review)) // OrderSpecifier<?>[]로 변환해서 넘겨줘야함.
@@ -81,10 +82,9 @@ public class ReviewQueryDslImpl implements ReviewQueryDsl {
                         groupBy(reviewPhoto.review.id).as(list(reviewPhoto.url))
                 );
 
-
         // 4. fetch join으로 가져온 content + groupBy로 가져온 photoUrlMap으로 ReviewResponseDto를 조립한다.
         List<ReviewResDto> dtoList = content.stream()
-                .map(r->reviewMapper.toReviewResponseDto(r, photoUrlMap))
+                .map(r->reviewMapper.toReviewResDto(r, photoUrlMap))
                 .toList();
 
         // 5. 해당 조건(Predicate)에 맞는 데이터의 총 개수를 구하는 쿼리
