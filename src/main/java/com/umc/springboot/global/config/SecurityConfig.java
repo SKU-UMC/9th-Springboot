@@ -4,10 +4,10 @@ import com.umc.springboot.global.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,18 +27,27 @@ public class SecurityConfig {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource))
-        .sessionManagement(session ->
-            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
+//        .sessionManagement(session ->
+//            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//        )
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
-                "/api/auth/**",
                 "/swagger-ui/**",
-                "/v3/api-docs/**"
+                "/v3/api-docs/**",
+                "/favicon.ico"
             ).permitAll()
+
+            .requestMatchers("/api/auth/**").permitAll()
+
             .anyRequest().authenticated()
         )
-        // JWT 필터 추가
+        .formLogin(form -> form
+            .defaultSuccessUrl("/swagger-ui/index.html", true)
+            .permitAll()
+        )
+
+        .httpBasic(Customizer.withDefaults())
+
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
