@@ -39,4 +39,8 @@ public class UserMission extends BaseTimeEntity {
 
   @Column(name = "is_completed", nullable = false)
   private Boolean isCompleted;
+
+  public void updateCompletion(boolean completed) {
+    this.isCompleted = completed;
+  }
 }

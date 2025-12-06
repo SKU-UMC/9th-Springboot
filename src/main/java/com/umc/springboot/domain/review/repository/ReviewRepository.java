@@ -2,6 +2,8 @@ package com.umc.springboot.domain.review.repository;
 
 import com.umc.springboot.domain.review.entity.Review;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +18,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewQue
 
   boolean existsByUserIdAndStoreId(Long userId, Long storeId);
 
+  Page<Review> findByStoreId(Long storeId, Pageable pageable);
 }

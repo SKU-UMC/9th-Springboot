@@ -14,6 +14,8 @@ import com.umc.springboot.domain.user.entity.User;
 import com.umc.springboot.domain.user.repository.UserRepository;
 import com.umc.springboot.global.exception.CustomException;
 import com.umc.springboot.global.exception.GlobalErrorCode;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,4 +73,59 @@ public class MissionService {
 
     return MissionConverter.toUserMissionResponse(userMission);
   }
+
+  /**
+   * 특정 가게의 미션 목록 조회
+   */
+  @Transactional
+  public List<MissionResponse> getMissionsByStore(Long storeId) {
+    // 가게 존재 여부 체크 (없으면 404)
+    storeRepository.findById(storeId)
+        .orElseThrow(() -> new CustomException(GlobalErrorCode.RESOURCE_NOT_FOUND));
+
+    List<Mission> missions = missionRepository.findByStoreId(storeId);
+
+    return missions.stream()
+        .map(MissionConverter::toResponse)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 내가 진행중인 미션 목록 조회 (isCompleted = false)
+   */
+  @Transactional
+  public List<UserMissionResponse> getInProgressMissionsByUser(Long userId) {
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(GlobalErrorCode.RESOURCE_NOT_FOUND));
+
+    List<UserMission> userMissions =
+        userMissionRepository.findByUserIdAndIsCompletedFalse(user.getId());
+
+    return userMissions.stream()
+        .map(MissionConverter::toUserMissionResponse)
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 진행 중인 미션 완료 처리
+   */
+  @Transactional
+  public UserMissionResponse updateUserMissionStatus(Long userId, Long userMissionId,
+      Boolean isCompleted) {
+
+    // 본인 데이터인지 확인
+    UserMission userMission = userMissionRepository.findByIdAndUserId(userMissionId, userId)
+        .orElseThrow(() -> new CustomException(GlobalErrorCode.RESOURCE_NOT_FOUND));
+
+    if (isCompleted == null) {
+      throw new CustomException(GlobalErrorCode.INVALID_INPUT_VALUE);
+    }
+
+    // 상태 변경
+    userMission.updateCompletion(isCompleted);
+
+    return MissionConverter.toUserMissionResponse(userMission);
+  }
+
 }

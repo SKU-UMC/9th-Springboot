@@ -4,7 +4,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umc.springboot.domain.review.dto.request.ReviewRequest;
 import com.umc.springboot.domain.review.entity.Review;
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,20 +50,9 @@ public class ReviewQueryRepositoryImpl implements ReviewQueryRepository {
       return where;
     }
 
-    if (filter.getStoreName() != null && !filter.getStoreName().isBlank()) {
-      where.and(review.store.name.eq(filter.getStoreName()));
-    }
-
-    if (filter.getRatingBand() != null) {
-      int band = filter.getRatingBand();
-      BigDecimal lower = BigDecimal.valueOf(band).setScale(1);
-
-      if (band == 5) {
-        where.and(review.rating.eq(BigDecimal.valueOf(5.0).setScale(1)));
-      } else {
-        BigDecimal upper = BigDecimal.valueOf(band + 1).setScale(1);
-        where.and(review.rating.goe(lower).and(review.rating.lt(upper)));
-      }
+    // storeId 필터
+    if (filter.getStoreId() != null) {
+      where.and(review.store.id.eq(filter.getStoreId()));
     }
 
     return where;

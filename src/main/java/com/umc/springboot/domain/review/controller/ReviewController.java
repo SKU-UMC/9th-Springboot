@@ -2,6 +2,7 @@ package com.umc.springboot.domain.review.controller;
 
 import com.umc.springboot.domain.review.dto.request.ReviewCreateRequest;
 import com.umc.springboot.domain.review.dto.request.ReviewRequest;
+import com.umc.springboot.domain.review.dto.response.PageableResponse;
 import com.umc.springboot.domain.review.dto.response.ReviewResponse;
 import com.umc.springboot.domain.review.service.ReviewService;
 import com.umc.springboot.global.response.BaseResponse;
@@ -9,14 +10,14 @@ import com.umc.springboot.global.security.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/reviews")
 @Tag(name = "Review", description = "리뷰 조회/작성 API")
+@Validated
 public class ReviewController {
 
   private final ReviewService reviewService;
@@ -52,29 +54,77 @@ public class ReviewController {
   }
 
   /**
-   * 내 리뷰 목록 조회
+   * 내 리뷰 페이징 조회
    */
   @Operation(
-      summary = "내 리뷰 목록 조회",
+      summary = "내 리뷰 페이징 조회",
       description = """
-          현재 로그인 사용자의 리뷰 목록을 조회합니다.
+          현재 로그인 사용자의 리뷰를 페이지 단위로 조회합니다.
+          - page: 1 이상의 정수(1 페이지부터 시작)
+          - size: 10 고정
           - 필터: storeName(정확 일치), ratingBand(1~5)
-          - ratingBand=4 ⇒ [4.0,5.0), ratingBand=5 ⇒ 5.0만
-          """)
+          """
+  )
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<BaseResponse<Page<ReviewResponse>>> getReviews(
-      @RequestParam(required = false) String storeName,
-      @RequestParam(required = false) @Min(1) @Max(5) Integer ratingBand,
-      @PageableDefault(size = 10, sort = "createdAt,desc") Pageable pageable
+  public ResponseEntity<BaseResponse<PageableResponse<ReviewResponse>>> getMyReviewsPaged(
+      @RequestParam(required = false) Long storeId,
+      @RequestParam(name = "page", defaultValue = "1") Integer page
   ) {
     Long userId = SecurityUtil.getCurrentUserId();
 
+    int pageIndex = page - 1;
+
+    Pageable pageable = PageRequest.of(
+        pageIndex,
+        10,
+        Sort.by(Sort.Direction.DESC, "createdAt")
+    );
+
     ReviewRequest filter = ReviewRequest.builder()
-        .storeName(storeName)
-        .ratingBand(ratingBand)
+        .storeId(storeId)
         .build();
 
-    Page<ReviewResponse> page = reviewService.getReviewsByUser(userId, filter, pageable);
-    return ResponseEntity.ok(BaseResponse.success("리뷰 조회에 성공했습니다.", page));
+    Page<ReviewResponse> result = reviewService.getReviewsByUser(userId, filter, pageable);
+
+    PageableResponse<ReviewResponse> body = PageableResponse.from(result);
+
+    return ResponseEntity.ok(
+        BaseResponse.success("내 리뷰 페이징 조회에 성공했습니다.", body)
+    );
+  }
+
+
+  /**
+   * 가게 리뷰 페이징 조회
+   */
+  @Operation(
+      summary = "가게 리뷰 목록 조회",
+      description = """
+          특정 가게에 대한 리뷰를 페이지 단위로 조회합니다.
+          - page: 1 이상의 정수(1 페이지부터 시작)
+          - size: 10으로 고정
+          - 정렬: 작성일시(createdAt) 내림차순
+          """
+  )
+  @GetMapping(value = "/stores/{storeId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<BaseResponse<PageableResponse<ReviewResponse>>> getStoreReviews(
+      @PathVariable Long storeId,
+      @RequestParam(name = "page", defaultValue = "1") Integer page
+  ) {
+    int pageIndex = page - 1;
+
+    Pageable pageable = PageRequest.of(
+        pageIndex,
+        10,
+        Sort.by(Sort.Direction.DESC, "createdAt")
+    );
+
+    Page<ReviewResponse> result = reviewService.getReviewsByStore(storeId, pageable);
+
+    PageableResponse<ReviewResponse> body = PageableResponse.from(result);
+
+    return ResponseEntity.ok(
+        BaseResponse.success("가게 리뷰 조회에 성공했습니다.", body)
+    );
   }
 }

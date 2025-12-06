@@ -94,23 +94,58 @@ public class ReviewService {
   }
 
   /**
-   * 내 리뷰 목록 조회 (기존 코드 유지)
+   * 내 리뷰 목록 조회
    */
-  public Page<ReviewResponse> getReviewsByUser(Long userId, ReviewRequest filter,
-      Pageable pageable) {
+  public Page<ReviewResponse> getReviewsByUser(Long userId,
+      ReviewRequest filter, Pageable pageable) {
 
-    // ratingBand 검증
-    if (filter.getRatingBand() != null) {
-      int band = filter.getRatingBand();
-      if (band < 1 || band > 5) {
-        throw new CustomException(GlobalErrorCode.INVALID_INPUT_VALUE);
-      }
-    }
-
+    // 필터 검증 로직은 필요 없고, 그대로 QueryRepository에 넘김
     Page<Review> page = reviewRepository.findMyReviews(userId, filter, pageable);
 
     // 이하 기존 코드 그대로
     List<Long> reviewIds = page.getContent().stream().map(Review::getId).toList();
+
+    Map<Long, List<String>> imagesByReviewId = Collections.emptyMap();
+
+    if (!reviewIds.isEmpty()) {
+      List<ReviewImage> allImages = reviewImageRepository.findByReviewIdIn(reviewIds);
+
+      imagesByReviewId = allImages.stream()
+          .collect(Collectors.groupingBy(
+              img -> img.getReview().getId(),
+              Collectors.mapping(ReviewImage::getImageUrl, Collectors.toList())
+          ));
+    }
+
+    Map<Long, List<String>> finalImagesMap = imagesByReviewId;
+
+    List<ReviewResponse> content = page.getContent().stream()
+        .map(r -> ReviewConverter.toResponse(
+            r,
+            finalImagesMap.getOrDefault(r.getId(), List.of())
+        ))
+        .toList();
+
+    return new PageImpl<>(content, pageable, page.getTotalElements());
+  }
+
+
+  /**
+   * 가게별 리뷰 목록 페이징 조회
+   */
+  public Page<ReviewResponse> getReviewsByStore(Long storeId, Pageable pageable) {
+
+    // 가게 존재 여부 검증
+    Store store = storeRepository.findById(storeId)
+        .orElseThrow(() -> new CustomException(GlobalErrorCode.RESOURCE_NOT_FOUND));
+
+    // 해당 가게의 리뷰 페이지 조회
+    Page<Review> page = reviewRepository.findByStoreId(store.getId(), pageable);
+
+    // 리뷰 ID 목록 추출
+    List<Long> reviewIds = page.getContent().stream()
+        .map(Review::getId)
+        .toList();
 
     Map<Long, List<String>> imagesByReviewId = Collections.emptyMap();
 
