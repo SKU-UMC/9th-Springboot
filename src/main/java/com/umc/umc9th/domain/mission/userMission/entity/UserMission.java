@@ -38,5 +38,12 @@ public class UserMission extends BaseEntity {
         this.missionStatus = status;
     }
 
-    public static UserMission inProgressing(Mission mission, User user, MissionStatus missionStatus) { return new UserMission(mission, user, MissionStatus.IN_PROGRESS); }
+    public static UserMission inProgressing(Mission mission, User user) {
+        return new UserMission(mission, user, MissionStatus.IN_PROGRESS);
+    }
+
+    public void updateMissionStatus(MissionStatus missionStatus) {
+        this.missionStatus = missionStatus;
+    }
+
 }

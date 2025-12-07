@@ -12,7 +12,6 @@ import com.umc.umc9th.domain.store.entity.Store;
 import com.umc.umc9th.domain.store.repository.StoreRepository;
 import com.umc.umc9th.domain.user.entity.User;
 import com.umc.umc9th.domain.user.repository.UserRepository;
-import com.umc.umc9th.global.error.code.ErrorCode;
 import com.umc.umc9th.global.error.code.GlobalErrorCode;
 import com.umc.umc9th.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;

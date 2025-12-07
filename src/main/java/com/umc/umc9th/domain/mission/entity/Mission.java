@@ -49,4 +49,7 @@ public class Mission extends BaseEntity {
     @OneToMany(mappedBy = "mission", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserMission> userMissions = new ArrayList<>();
 
+    public void updateMissionStatus(MissionStatus missionStatus) {
+        this.missionStatus = missionStatus;
+    }
 }

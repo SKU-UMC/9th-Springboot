@@ -4,6 +4,7 @@ package com.umc.umc9th.domain.mission.userMission.repository;
 import com.umc.umc9th.domain.mission.dto.response.AvailableMissionInRegionResponse;
 import com.umc.umc9th.domain.mission.dto.response.RegionMissionSuccessCountResponse;
 import com.umc.umc9th.domain.mission.entity.Mission;
+import com.umc.umc9th.domain.mission.entity.MissionStatus;
 import com.umc.umc9th.domain.mission.userMission.dto.response.UserMissionInProgressResponse;
 import com.umc.umc9th.domain.mission.userMission.dto.response.UserMissionSuccessResponse;
 import com.umc.umc9th.domain.mission.userMission.entity.UserMission;
@@ -108,6 +109,10 @@ where um.user_id = :userId
             Pageable pageable
     );
 
-
     Boolean existsByUserAndMission(User user, Mission mission);
+
+    Page<UserMission> findUserMissionsByUser_Id(Long userId, Pageable pageable);
+
+    Optional<UserMission> findByIdAndUser_Id(Long userMissionId, Long userId);
+
 }

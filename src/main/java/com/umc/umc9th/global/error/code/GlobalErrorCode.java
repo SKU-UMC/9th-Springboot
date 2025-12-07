@@ -29,8 +29,11 @@ public enum GlobalErrorCode implements ErrorCode {
     /// 토큰 관련 오류
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_001", "유효하지 않은 토큰입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_002", "Refresh Token이 일치하지 않습니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_003", "토큰이 만료되었습니다.")
-    ;
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "TOKEN_003", "토큰이 만료되었습니다."),
+
+
+    /// RequestParam 관련 오류
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST,"PARAM_001", "요청 파라미터가 유효하지 않습니다") ;
 
     private final HttpStatus status;
     private final String code;
